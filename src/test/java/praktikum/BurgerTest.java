@@ -19,25 +19,28 @@ public class BurgerTest {
     @Before
     public void setUp() {
         burger = new Burger();
+        burger.setBuns(bun);
+        Mockito.when(bun.getName()).thenReturn("standard bun");
+        Mockito.when(bun.getPrice()).thenReturn(100f);
     }
 
     @Test
     public void testSetBuns() {
         burger.setBuns(bun);
-        assertEquals(bun, burger.bun);
+        assertEquals("Проверка установки булочки", bun, burger.bun);
     }
 
     @Test
     public void testAddIngredient() {
         burger.addIngredient(ingredient1);
-        assertTrue(burger.ingredients.contains(ingredient1));
+        assertTrue("Проверка добавления ингредиента", burger.ingredients.contains(ingredient1));
     }
 
     @Test
     public void testRemoveIngredient() {
         burger.addIngredient(ingredient1);
         burger.removeIngredient(0);
-        assertFalse(burger.ingredients.contains(ingredient1));
+        assertFalse("Проверка удаления ингредиента", burger.ingredients.contains(ingredient1));
     }
 
     @Test
@@ -45,7 +48,7 @@ public class BurgerTest {
         burger.addIngredient(ingredient1);
         burger.addIngredient(ingredient2);
         burger.moveIngredient(0, 1);
-        assertEquals(ingredient1, burger.ingredients.get(1));
+        assertEquals("Проверка перемещения ингредиента", ingredient1, burger.ingredients.get(1));
     }
 
     @Test
@@ -57,21 +60,37 @@ public class BurgerTest {
         burger.addIngredient(ingredient1);
 
         float expectedPrice = 2 * 100f + 50f;
-        assertEquals(expectedPrice, burger.getPrice(), 0.001f);
+        assertEquals("Проверка расчета цены", expectedPrice, burger.getPrice(), 0.001f);
     }
 
     @Test
-    public void testGetReceipt() {
+    public void testGetReceiptContainsBunName() {
         Mockito.when(bun.getName()).thenReturn("black bun");
-        Mockito.when(ingredient1.getType()).thenReturn(IngredientType.SAUCE);
-        Mockito.when(ingredient1.getName()).thenReturn("hot sauce");
-
         burger.setBuns(bun);
+
+        String receipt = burger.getReceipt();
+        assertTrue("Проверка наличия названия булочки в рецепте", receipt.contains("black bun"));
+    }
+
+    @Test
+    public void testGetReceiptContainsIngredientName() {
+        Mockito.when(ingredient1.getName()).thenReturn("hot sauce");
+        Mockito.when(ingredient1.getType()).thenReturn(IngredientType.SAUCE);
+
         burger.addIngredient(ingredient1);
 
         String receipt = burger.getReceipt();
-        assertTrue(receipt.contains("black bun"));
-        assertTrue(receipt.contains("hot sauce"));
-        assertTrue(receipt.contains("sauce"));
+        assertTrue("Проверка наличия названия ингредиента в рецепте", receipt.contains("hot sauce"));
+    }
+
+    @Test
+    public void testGetReceiptContainsIngredientType() {
+        Mockito.when(ingredient1.getType()).thenReturn(IngredientType.SAUCE);
+        Mockito.when(ingredient1.getName()).thenReturn("sauce");
+        ;
+        burger.addIngredient(ingredient1);
+
+        String receipt = burger.getReceipt();
+        assertTrue("Проверка наличия типа ингредиента в рецепте", receipt.contains("sauce"));
     }
 }
