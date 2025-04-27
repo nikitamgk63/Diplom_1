@@ -87,7 +87,7 @@ public class BurgerTest {
     public void testGetReceiptContainsIngredientType() {
         Mockito.when(ingredient1.getType()).thenReturn(IngredientType.SAUCE);
         Mockito.when(ingredient1.getName()).thenReturn("sauce");
-        ;
+
         burger.addIngredient(ingredient1);
 
         String receipt = burger.getReceipt();
